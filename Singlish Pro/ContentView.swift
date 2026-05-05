@@ -564,7 +564,7 @@ struct ContentView: View {
                             .cornerRadius(10)
                     }
 
-                    Button(action: { useCounter.markRated(); showRatePrompt = false }) {
+                    Button(action: { showRatePrompt = false }) {
                         Text("Maybe Later")
                             .font(.system(size: 15, weight: .medium))
                             .foregroundColor(.white.opacity(0.6))

@@ -1,5 +1,6 @@
 import Foundation
 import UIKit
+import SwiftUI
 
 enum KeyboardAccent: String, CaseIterable {
     case black = "black"
@@ -36,38 +37,37 @@ enum KeyboardAccent: String, CaseIterable {
     }
 }
 
-import SwiftUI
-
 final class KeyboardSettings: ObservableObject {
     static let shared = KeyboardSettings()
     private let suite: UserDefaults
+    private var isReloadingFromSuite = false
 
     @Published var showNumberRow: Bool {
-        didSet { suite.set(showNumberRow, forKey: "showNumberRow") }
+        didSet { persist(showNumberRow, forKey: "showNumberRow") }
     }
     @Published var autoSpaceAfterPunctuation: Bool {
-        didSet { suite.set(autoSpaceAfterPunctuation, forKey: "autoSpaceAfterPunctuation") }
+        didSet { persist(autoSpaceAfterPunctuation, forKey: "autoSpaceAfterPunctuation") }
     }
     @Published var hapticFeedback: Bool {
-        didSet { suite.set(hapticFeedback, forKey: "hapticFeedback") }
+        didSet { persist(hapticFeedback, forKey: "hapticFeedback") }
     }
     @Published var keyPreview: Bool {
-        didSet { suite.set(keyPreview, forKey: "keyPreview") }
+        didSet { persist(keyPreview, forKey: "keyPreview") }
     }
     @Published var doubleSpacePeriod: Bool {
-        didSet { suite.set(doubleSpacePeriod, forKey: "doubleSpacePeriod") }
+        didSet { persist(doubleSpacePeriod, forKey: "doubleSpacePeriod") }
     }
     @Published var showClipboardPaste: Bool {
-        didSet { suite.set(showClipboardPaste, forKey: "showClipboardPaste") }
+        didSet { persist(showClipboardPaste, forKey: "showClipboardPaste") }
     }
     @Published var accentColor: KeyboardAccent {
-        didSet { suite.set(accentColor.rawValue, forKey: "accentColor") }
+        didSet { persist(accentColor.rawValue, forKey: "accentColor") }
     }
     @Published var enableSuggestions: Bool {
-        didSet { suite.set(enableSuggestions, forKey: "enableSuggestions") }
+        didSet { persist(enableSuggestions, forKey: "enableSuggestions") }
     }
     @Published var enableLearning: Bool {
-        didSet { suite.set(enableLearning, forKey: "enableLearning") }
+        didSet { persist(enableLearning, forKey: "enableLearning") }
     }
 
     private let hapticGenerator = UIImpactFeedbackGenerator(style: .light)
@@ -95,7 +95,13 @@ final class KeyboardSettings: ObservableObject {
         }
     }
 
+    private func persist(_ value: Any, forKey key: String) {
+        guard !isReloadingFromSuite else { return }
+        suite.set(value, forKey: key)
+    }
+
     private func reloadFromSuite() {
+        isReloadingFromSuite = true
         showNumberRow = suite.object(forKey: "showNumberRow") as? Bool ?? true
         autoSpaceAfterPunctuation = suite.object(forKey: "autoSpaceAfterPunctuation") as? Bool ?? true
         hapticFeedback = suite.object(forKey: "hapticFeedback") as? Bool ?? true
@@ -105,6 +111,7 @@ final class KeyboardSettings: ObservableObject {
         enableSuggestions = suite.object(forKey: "enableSuggestions") as? Bool ?? true
         enableLearning = suite.object(forKey: "enableLearning") as? Bool ?? true
         accentColor = KeyboardAccent(rawValue: suite.string(forKey: "accentColor") ?? "") ?? .black
+        isReloadingFromSuite = false
     }
 
     func performHaptic() {
@@ -119,30 +126,118 @@ final class LearnedWords {
     private let suite: UserDefaults
     private let key = "learnedWordFrequencies"
 
+    struct Entry: Codable {
+        let input: String
+        let output: String
+        var count: Int
+    }
+
     private init() {
         suite = UserDefaults(suiteName: "group.KDJ.Singlish-Pro") ?? .standard
     }
 
-    private func load() -> [String: Int] {
-        suite.dictionary(forKey: key) as? [String: Int] ?? [:]
+    private func normalizedKey(input: String, output: String) -> String {
+        "\(input.lowercased())\u{001F}\(output)"
+    }
+
+    private func load() -> [String: Entry] {
+        if let data = suite.data(forKey: key),
+           let decoded = try? JSONDecoder().decode([String: Entry].self, from: data) {
+            return decoded
+        }
+
+        // Migrate legacy payloads that stored only a single string key.
+        if let legacy = suite.dictionary(forKey: key) as? [String: Int] {
+            var migrated: [String: Entry] = [:]
+            for (word, count) in legacy {
+                let key = normalizedKey(input: word, output: word)
+                migrated[key] = Entry(input: word, output: word, count: count)
+            }
+            save(migrated)
+            return migrated
+        }
+
+        return [:]
+    }
+
+    private func save(_ entries: [String: Entry]) {
+        guard let data = try? JSONEncoder().encode(entries) else { return }
+        suite.set(data, forKey: key)
+    }
+
+    private func deduplicate(_ words: [String], limit: Int) -> [String] {
+        var seen = Set<String>()
+        var result: [String] = []
+
+        for word in words where seen.insert(word).inserted {
+            result.append(word)
+            if result.count == limit {
+                break
+            }
+        }
+
+        return result
+    }
+
+    func record(input: String, output: String) {
+        let cleanedInput = input.trimmingCharacters(in: .whitespacesAndNewlines)
+        let cleanedOutput = output.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !cleanedOutput.isEmpty else { return }
+
+        let key = normalizedKey(input: cleanedInput.isEmpty ? cleanedOutput : cleanedInput, output: cleanedOutput)
+        var entries = load()
+        if var entry = entries[key] {
+            entry.count += 1
+            entries[key] = entry
+        } else {
+            entries[key] = Entry(
+                input: cleanedInput.isEmpty ? cleanedOutput : cleanedInput,
+                output: cleanedOutput,
+                count: 1
+            )
+        }
+        save(entries)
     }
 
     func record(_ word: String) {
-        let cleaned = word.lowercased().trimmingCharacters(in: .whitespacesAndNewlines)
-        guard !cleaned.isEmpty else { return }
-        var freq = load()
-        freq[cleaned, default: 0] += 1
-        suite.set(freq, forKey: key)
+        record(input: word, output: word)
+    }
+
+    func suggestions(forInputPrefix prefix: String, limit: Int = 3) -> [String] {
+        let lower = prefix.lowercased()
+        guard !lower.isEmpty else { return [] }
+
+        let matches = load().values
+            .filter { $0.input.lowercased().hasPrefix(lower) }
+            .sorted { lhs, rhs in
+                if lhs.count == rhs.count {
+                    return lhs.output < rhs.output
+                }
+                return lhs.count > rhs.count
+            }
+            .map(\.output)
+
+        return deduplicate(matches, limit: limit)
     }
 
     func suggestions(for prefix: String, limit: Int = 3) -> [String] {
-        let freq = load()
         let lower = prefix.lowercased()
-        let matches = freq
-            .filter { $0.key.hasPrefix(lower) }
-            .sorted { $0.value > $1.value }
-            .prefix(limit)
-            .map { $0.key }
-        return Array(matches)
+        guard !lower.isEmpty else { return [] }
+
+        let matches = load().values
+            .filter { $0.output.lowercased().hasPrefix(lower) || $0.input.lowercased().hasPrefix(lower) }
+            .sorted { lhs, rhs in
+                if lhs.count == rhs.count {
+                    return lhs.output < rhs.output
+                }
+                return lhs.count > rhs.count
+            }
+            .map(\.output)
+
+        return deduplicate(matches, limit: limit)
+    }
+
+    func resetForTests() {
+        suite.removeObject(forKey: key)
     }
 }

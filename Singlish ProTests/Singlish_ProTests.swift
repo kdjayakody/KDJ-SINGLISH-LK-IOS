@@ -20,6 +20,7 @@ struct Singlish_ProTests {
         engine.reset()
         engine.append("o")
         engine.append("y")
+        engine.append("a")
         #expect(engine.displayText == "ඔය")
 
         engine.reset()
@@ -60,6 +61,7 @@ struct Singlish_ProTests {
         engine.append("m")
         engine.append("a")
         engine.append("d")
+        engine.append("h")
         engine.append("a")
         let result = engine.displayText
         #expect(result.contains("කොහොමද"))
@@ -92,10 +94,10 @@ struct Singlish_ProTests {
         #expect(engine.displayText == "මම")
 
         engine.deleteBackward()
-        #expect(engine.displayText == "ම")
+        #expect(engine.displayText == "මම්")
 
         engine.deleteBackward()
-        #expect(engine.displayText == "")
+        #expect(engine.displayText == "ම")
     }
 
     @Test func testReset() async throws {
@@ -137,7 +139,7 @@ struct Singlish_ProTests {
 
         engine.append("k")
         engine.append("o")
-        #expect(engine.displayText == "කෝ")
+        #expect(engine.displayText == "කො")
 
         engine.reset()
         engine.append("b")
@@ -153,6 +155,39 @@ struct Singlish_ProTests {
         engine.append("l")
         // Test rakaransaya (r combination)
         #expect(engine.displayText.contains("ල්"))
+    }
+
+    @Test func testLearnedWordsSuggestByLatinInputPrefix() async throws {
+        let learnedWords = LearnedWords.shared
+        let prefix = "ko_test_a"
+
+        learnedWords.record(input: prefix, output: "කොහොමද")
+        learnedWords.record(input: prefix, output: "කොහොමද")
+        learnedWords.record(input: prefix, output: "කොහොමද?")
+        learnedWords.record(input: "ma_test_a", output: "මම")
+
+        let suggestions = learnedWords.suggestions(forInputPrefix: prefix, limit: 3)
+
+        #expect(suggestions.first == "කොහොමද")
+        #expect(suggestions.contains("කොහොමද?"))
+        #expect(!suggestions.contains("මම"))
+    }
+
+    @Test func testLearnedWordsFallbackSupportsLegacyPrefixQueries() async throws {
+        let learnedWords = LearnedWords.shared
+        let inputPrefix = "ko_test_b"
+
+        learnedWords.record(input: inputPrefix, output: "කොහොමද")
+        let sinhalaSuggestions = learnedWords.suggestions(for: "කො", limit: 10)
+
+        #expect(sinhalaSuggestions.contains("කොහොමද"))
+    }
+
+    @Test func testSinhalaCompositionDeletionCounts() async throws {
+        #expect(SinhalaComposition.deletionCount(for: "ම") == 1)
+        #expect(SinhalaComposition.deletionCount(for: "ම්") == 2)
+        #expect(SinhalaComposition.deletionCount(for: "ක්") == 2)
+        #expect(SinhalaComposition.deletionCount(for: "කො") == 2)
     }
 
 }

@@ -1,5 +1,11 @@
 import Foundation
 
+enum SinhalaComposition {
+    static func deletionCount(for text: String) -> Int {
+        text.unicodeScalars.count
+    }
+}
+
 final class SinglishEngine {
     private var buffer: String = ""
 
@@ -120,7 +126,7 @@ final class SinglishEngine {
             ("කොහො", "කොහොමද"),
             ("ආයු", "ආයුබෝවන්"),
             ("ස්තූ", "ස්තූතියි"),
-            ("සුභ", "සුභ දෑසනක්"),
+            ("සුභ", "සුභ උදෑසනක්"),
             ("හො", "හොඳයි"),
             ("එන", "එනවා"),
             ("යන", "යන්න"),

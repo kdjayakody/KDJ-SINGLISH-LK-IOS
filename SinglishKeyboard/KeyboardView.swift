@@ -8,19 +8,19 @@ enum KeyboardMode {
 let sinhalaKeyMap: [String: String] = [
     "q": "ඣ", "w": "ව", "e": "එ", "r": "ර", "t": "ට", "y": "ය", "u": "උ", "i": "ඉ", "o": "ඔ", "p": "ප",
     "a": "අ", "s": "ස", "d": "ඩ", "f": "ෆ", "g": "ග", "h": "හ", "j": "ජ", "k": "ක", "l": "ල",
-    "z": "", "x": "ං", "c": "ච", "v": "ව", "b": "බ", "n": "න", "m": "ම"
+    "z": "ං", "x": "ං", "c": "ච", "v": "ව", "b": "බ", "n": "න", "m": "ම"
 ]
 
 let longPressMap: [String: [String]] = [
     "a": ["ආ", "ඇ", "ඈ", "@", "a"],
     "e": ["ඒ", "ඓ", "එ", "e"],
-    "i": ["ඊ", "", "i"],
-    "o": ["ඕ", "", "o"],
-    "u": ["ඌ", "", "u"],
+    "i": ["ඊ", "ී", "i"],
+    "o": ["ඕ", "ෝ", "o"],
+    "u": ["ඌ", "ූ", "u"],
     "k": ["ඛ", "ක", "k"],
     "g": ["ඝ", "ග", "g"],
-    "c": ["ඡ", "", "c"],
-    "t": ["ඨ", "", "ත", "t"],
+    "c": ["ඡ", "ඡ", "c"],
+    "t": ["ඨ", "ත", "t"],
     "d": ["ඪ", "ධ", "ද", "d"],
     "n": ["ණ", "න", "n"],
     "l": ["ළ", "ල", "l"],
@@ -28,7 +28,7 @@ let longPressMap: [String: [String]] = [
     "h": ["හ", "h"],
     "r": ["ඍ", "ර", "r"],
     "p": ["ඵ", "ප", "p"],
-    "b": ["භ", "", "බ", "b"],
+    "b": ["භ", "බ", "b"],
     "m": ["ම", "m"],
     "y": ["ය", "y"],
     "w": ["ව", "w"],
@@ -58,6 +58,7 @@ struct KeyboardView: View {
     ]
 
     @State private var pressedKey: String? = nil
+    @State private var keyTouchStart: Date? = nil
 
     var accentColor: Color {
         settings.accentColor.swiftUIColor
@@ -106,18 +107,28 @@ struct KeyboardView: View {
                                     keyPopup(key: key, sinhalaLabel: sinhalaLabel)
                                 }
                             }
-                            .onTapGesture {
-                                settings.performHaptic()
-                                pressedKey = key
-                                insertText(characterToSend)
-                                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                                    pressedKey = nil
-                                }
-                            }
                             .simultaneousGesture(
-                                LongPressGesture(minimumDuration: 0.4)
+                                DragGesture(minimumDistance: 0)
+                                    .onChanged { _ in
+                                        if pressedKey != key {
+                                            pressedKey = key
+                                            keyTouchStart = Date()
+                                        }
+                                    }
                                     .onEnded { _ in
-                                        handleLongPress(key: key)
+                                        let duration = Date().timeIntervalSince(keyTouchStart ?? Date())
+                                        settings.performHaptic()
+
+                                        if duration >= 0.4 {
+                                            handleLongPress(key: key)
+                                        } else {
+                                            insertText(characterToSend)
+                                        }
+
+                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                            pressedKey = nil
+                                        }
+                                        keyTouchStart = nil
                                     }
                             )
                         }
@@ -274,7 +285,11 @@ struct KeyboardView: View {
         guard mode == .sinhala, let alternatives = longPressMap[key], !alternatives.isEmpty else {
             return
         }
-        insertText(alternatives[0])
+        // Insert the first alternative (long press character)
+        let alternative = alternatives[0]
+        if !alternative.isEmpty {
+            insertText(alternative)
+        }
     }
 
     private var bottomRow: some View {
@@ -303,7 +318,10 @@ struct KeyboardView: View {
                     .cornerRadius(8)
             }
 
-            SpaceBarView(mode: mode, onSwipe: { switchMode(mode == .sinhala ? .english : .sinhala) }, onTap: { insertText(" ") })
+            SpaceBarView(mode: mode, onSwipe: {
+                settings.performHaptic()
+                switchMode(mode == .sinhala ? .english : .sinhala)
+            }, onTap: { insertText(" ") })
 
             Button(action: {
                 settings.performHaptic()

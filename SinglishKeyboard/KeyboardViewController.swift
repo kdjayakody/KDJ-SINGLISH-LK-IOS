@@ -15,6 +15,7 @@ class KeyboardViewController: UIInputViewController {
         super.viewDidLoad()
         isOpenAccessGranted = self.hasFullAccess
         setupKeyboard()
+        updateSuggestions()
     }
 
     override func viewWillDisappear(_ animated: Bool) {
@@ -54,9 +55,7 @@ class KeyboardViewController: UIInputViewController {
                 self?.handleSuggestion(suggestion)
             },
             toggleShift: { [weak self] in
-                guard let self else { return }
-                self.isShifted.toggle()
-                self.updateSuggestions()
+                self?.toggleShiftAndUpdate()
             },
             advanceToNextInputMode: { [weak self] in
                 self?.advanceToNextInputMode()
@@ -77,11 +76,26 @@ class KeyboardViewController: UIInputViewController {
         updateSuggestions()
     }
 
+    private func toggleShiftAndUpdate() {
+        isShifted.toggle()
+        updateSuggestions()
+    }
+
     private func handleKeyPress(_ text: String) {
         guard !text.isEmpty else { return }
 
         if currentMode == .english {
             handleEnglishKeyPress(text)
+            return
+        }
+
+        if shouldInsertDirectly(text) {
+            commitCurrent()
+            textDocumentProxy.insertText(text)
+            if settings.enableLearning {
+                LearnedWords.shared.record(input: text, output: text)
+            }
+            updateSuggestions()
             return
         }
 
@@ -94,7 +108,7 @@ class KeyboardViewController: UIInputViewController {
 
         if text == " " {
             let now = Date()
-            if settings.doubleSpacePeriod && now.timeIntervalSince(lastSpaceTime) < 0.4 {
+            if settings.doubleSpacePeriod && now.timeIntervalSince(lastSpaceTime) < 0.5 {
                 let context = textDocumentProxy.documentContextBeforeInput ?? ""
                 if context.hasSuffix(" ") {
                     textDocumentProxy.deleteBackward()
@@ -122,8 +136,13 @@ class KeyboardViewController: UIInputViewController {
             return
         }
 
-        let char = text.lowercased().first ?? Character(text)
-        engine.append(char)
+        if text.count > 1 {
+            for char in text.lowercased() {
+                engine.append(char)
+            }
+        } else if let char = text.lowercased().first {
+            engine.append(char)
+        }
 
         if isShifted {
             isShifted = false
@@ -137,7 +156,7 @@ class KeyboardViewController: UIInputViewController {
     private func handleEnglishKeyPress(_ text: String) {
         if settings.doubleSpacePeriod && text == " " {
             let now = Date()
-            if now.timeIntervalSince(lastSpaceTime) < 0.4 {
+            if now.timeIntervalSince(lastSpaceTime) < 0.5 {
                 let context = textDocumentProxy.documentContextBeforeInput ?? ""
                 if context.hasSuffix(" ") {
                     textDocumentProxy.deleteBackward()
@@ -170,6 +189,10 @@ class KeyboardViewController: UIInputViewController {
             return
         }
 
+        // In Sinhala mode, delete behavior depends on state:
+        // 1. If typing in progress (engine buffer not empty): delete from buffer
+        // 2. If buffer empty but we just committed text: delete the committed Sinhala
+        // 3. Otherwise: normal delete
         if !engine.englishBuffer.isEmpty {
             engine.deleteBackward()
             let sinhala = engine.displayText
@@ -184,6 +207,7 @@ class KeyboardViewController: UIInputViewController {
     }
 
     private func handleSuggestion(_ suggestion: String) {
+        let inputPrefix = engine.englishBuffer
         if previousDeleteCount > 0 {
             deleteBackwardByCount(previousDeleteCount)
             previousDeleteCount = 0
@@ -193,7 +217,7 @@ class KeyboardViewController: UIInputViewController {
         textDocumentProxy.insertText(textToInsert)
 
         if settings.enableLearning {
-            LearnedWords.shared.record(textToInsert)
+            LearnedWords.shared.record(input: inputPrefix, output: textToInsert)
         }
 
         engine.reset()
@@ -206,7 +230,7 @@ class KeyboardViewController: UIInputViewController {
         if settings.enableLearning {
             let output = engine.displayText
             if !output.isEmpty {
-                LearnedWords.shared.record(output)
+                LearnedWords.shared.record(input: engine.englishBuffer, output: output)
             }
         }
 
@@ -227,8 +251,7 @@ class KeyboardViewController: UIInputViewController {
     }
 
     private func deletionCount(for text: String) -> Int {
-        let graphemeCount = text.count
-        return graphemeCount == 0 ? 1 : graphemeCount
+        SinhalaComposition.deletionCount(for: text)
     }
 
     private func deleteBackwardByCount(_ count: Int) {
@@ -237,20 +260,33 @@ class KeyboardViewController: UIInputViewController {
         }
     }
 
+    private func shouldInsertDirectly(_ text: String) -> Bool {
+        text.unicodeScalars.contains { scalar in
+            (0x0D80...0x0DFF).contains(scalar.value)
+        }
+    }
+
     private func updateSuggestions() {
         var suggestedWords: [String] = []
 
-        if settings.enableSuggestions && currentMode == .sinhala {
-            suggestedWords = engine.suggestions
+        if settings.enableSuggestions {
+            if currentMode == .sinhala {
+                suggestedWords = engine.suggestions
 
-            if settings.enableLearning {
-                let learned = LearnedWords.shared.suggestions(for: engine.englishBuffer, limit: 3)
-                for word in learned {
-                    let hasSinhala = word.unicodeScalars.contains { $0.value >= 0x0D80 && $0.value <= 0x0DFF }
-                    let converted = hasSinhala ? word : engine.convertToSinhala(word)
-                    if !converted.isEmpty && !suggestedWords.contains(converted) {
-                        suggestedWords.append(converted)
+                if settings.enableLearning {
+                    let learned = LearnedWords.shared.suggestions(forInputPrefix: engine.englishBuffer, limit: 3)
+                    for word in learned {
+                        if !word.isEmpty && !suggestedWords.contains(word) {
+                            suggestedWords.append(word)
+                        }
                     }
+                }
+            } else if settings.enableLearning {
+                // English mode suggestions
+                let context = textDocumentProxy.documentContextBeforeInput ?? ""
+                if let lastWord = context.components(separatedBy: .whitespacesAndNewlines).last {
+                    let learned = LearnedWords.shared.suggestions(for: lastWord, limit: 3)
+                    suggestedWords = learned
                 }
             }
 
@@ -272,9 +308,7 @@ class KeyboardViewController: UIInputViewController {
                 self?.handleSuggestion(suggestion)
             },
             toggleShift: { [weak self] in
-                guard let self else { return }
-                self.isShifted.toggle()
-                self.updateSuggestions()
+                self?.toggleShiftAndUpdate()
             },
             advanceToNextInputMode: { [weak self] in
                 self?.advanceToNextInputMode()
