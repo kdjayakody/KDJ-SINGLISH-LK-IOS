@@ -25,5 +25,5 @@ enum VersionConfig {
     static let appGroupIdentifier = "group.KDJ.Singlish-Pro"
 
     /// Minimum iOS version required
-    static let iOSVersion = "26.0"
+    static let iOSVersion = "18.5"
 }
