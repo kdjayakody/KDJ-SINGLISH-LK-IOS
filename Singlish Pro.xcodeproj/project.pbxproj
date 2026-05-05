@@ -1,0 +1,740 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		3D770C4F2F9A1E2900636331 /* SinglishKeyboard.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = 3D770C482F9A1E2900636331 /* SinglishKeyboard.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		3D770BDE2F9A0A4C00636331 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3D770BC62F9A0A4B00636331 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3D770BCD2F9A0A4B00636331;
+			remoteInfo = "Singlish Pro";
+		};
+		3D770BE82F9A0A4C00636331 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3D770BC62F9A0A4B00636331 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3D770BCD2F9A0A4B00636331;
+			remoteInfo = "Singlish Pro";
+		};
+		3D770C4D2F9A1E2900636331 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = 3D770BC62F9A0A4B00636331 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = 3D770C472F9A1E2900636331;
+			remoteInfo = SinglishKeyboard;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXCopyFilesBuildPhase section */
+		3D770C502F9A1E2900636331 /* Embed Foundation Extensions */ = {
+			isa = PBXCopyFilesBuildPhase;
+			buildActionMask = 2147483647;
+			dstPath = "";
+			dstSubfolderSpec = 13;
+			files = (
+				3D770C4F2F9A1E2900636331 /* SinglishKeyboard.appex in Embed Foundation Extensions */,
+			);
+			name = "Embed Foundation Extensions";
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXCopyFilesBuildPhase section */
+
+/* Begin PBXFileReference section */
+		3D770BCE2F9A0A4B00636331 /* Singlish Pro.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Singlish Pro.app"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D770BDD2F9A0A4C00636331 /* Singlish ProTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Singlish ProTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D770BE72F9A0A4C00636331 /* Singlish ProUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Singlish ProUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D770C482F9A1E2900636331 /* SinglishKeyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SinglishKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
+		3D770D012F9B000100636331 /* Singlish Pro.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Singlish Pro.entitlements"; sourceTree = "<group>"; };
+/* End PBXFileReference section */
+
+/* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
+		3D770C532F9A1E2900636331 /* Exceptions for "SinglishKeyboard" folder in "SinglishKeyboard" target */ = {
+			isa = PBXFileSystemSynchronizedBuildFileExceptionSet;
+			membershipExceptions = (
+				Info.plist,
+			);
+			target = 3D770C472F9A1E2900636331 /* SinglishKeyboard */;
+		};
+/* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
+
+/* Begin PBXFileSystemSynchronizedRootGroup section */
+		3D770C552F9A1E2900636340 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
+			sourceTree = "<group>";
+		};
+		3D770BD02F9A0A4B00636331 /* Singlish Pro */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Singlish Pro";
+			sourceTree = "<group>";
+		};
+		3D770BE02F9A0A4C00636331 /* Singlish ProTests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Singlish ProTests";
+			sourceTree = "<group>";
+		};
+		3D770BEA2F9A0A4C00636331 /* Singlish ProUITests */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = "Singlish ProUITests";
+			sourceTree = "<group>";
+		};
+		3D770C492F9A1E2900636331 /* SinglishKeyboard */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			exceptions = (
+				3D770C532F9A1E2900636331 /* Exceptions for "SinglishKeyboard" folder in "SinglishKeyboard" target */,
+			);
+			path = SinglishKeyboard;
+			sourceTree = "<group>";
+		};
+/* End PBXFileSystemSynchronizedRootGroup section */
+
+/* Begin PBXFrameworksBuildPhase section */
+		3D770BCB2F9A0A4B00636331 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3D770BDA2F9A0A4C00636331 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3D770BE42F9A0A4C00636331 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3D770C452F9A1E2900636331 /* Frameworks */ = {
+			isa = PBXFrameworksBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXFrameworksBuildPhase section */
+
+/* Begin PBXGroup section */
+		3D770BC52F9A0A4B00636331 = {
+			isa = PBXGroup;
+			children = (
+				3D770C552F9A1E2900636340 /* Shared */,
+				3D770BD02F9A0A4B00636331 /* Singlish Pro */,
+				3D770BE02F9A0A4C00636331 /* Singlish ProTests */,
+				3D770BEA2F9A0A4C00636331 /* Singlish ProUITests */,
+				3D770C492F9A1E2900636331 /* SinglishKeyboard */,
+				3D770BCF2F9A0A4B00636331 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		3D770BCF2F9A0A4B00636331 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				3D770BCE2F9A0A4B00636331 /* Singlish Pro.app */,
+				3D770BDD2F9A0A4C00636331 /* Singlish ProTests.xctest */,
+				3D770BE72F9A0A4C00636331 /* Singlish ProUITests.xctest */,
+				3D770C482F9A1E2900636331 /* SinglishKeyboard.appex */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		3D770BCD2F9A0A4B00636331 /* Singlish Pro */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3D770BF12F9A0A4C00636331 /* Build configuration list for PBXNativeTarget "Singlish Pro" */;
+			buildPhases = (
+				3D770BCA2F9A0A4B00636331 /* Sources */,
+				3D770BCB2F9A0A4B00636331 /* Frameworks */,
+				3D770BCC2F9A0A4B00636331 /* Resources */,
+				3D770C502F9A1E2900636331 /* Embed Foundation Extensions */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3D770C4E2F9A1E2900636331 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				3D770C552F9A1E2900636340 /* Shared */,
+				3D770BD02F9A0A4B00636331 /* Singlish Pro */,
+			);
+			name = "Singlish Pro";
+			packageProductDependencies = (
+			);
+			productName = "Singlish Pro";
+			productReference = 3D770BCE2F9A0A4B00636331 /* Singlish Pro.app */;
+			productType = "com.apple.product-type.application";
+		};
+		3D770BDC2F9A0A4C00636331 /* Singlish ProTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3D770BF42F9A0A4C00636331 /* Build configuration list for PBXNativeTarget "Singlish ProTests" */;
+			buildPhases = (
+				3D770BD92F9A0A4C00636331 /* Sources */,
+				3D770BDA2F9A0A4C00636331 /* Frameworks */,
+				3D770BDB2F9A0A4C00636331 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3D770BDF2F9A0A4C00636331 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				3D770BE02F9A0A4C00636331 /* Singlish ProTests */,
+			);
+			name = "Singlish ProTests";
+			packageProductDependencies = (
+			);
+			productName = "Singlish ProTests";
+			productReference = 3D770BDD2F9A0A4C00636331 /* Singlish ProTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		3D770BE62F9A0A4C00636331 /* Singlish ProUITests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3D770BF72F9A0A4C00636331 /* Build configuration list for PBXNativeTarget "Singlish ProUITests" */;
+			buildPhases = (
+				3D770BE32F9A0A4C00636331 /* Sources */,
+				3D770BE42F9A0A4C00636331 /* Frameworks */,
+				3D770BE52F9A0A4C00636331 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				3D770BE92F9A0A4C00636331 /* PBXTargetDependency */,
+			);
+			fileSystemSynchronizedGroups = (
+				3D770BEA2F9A0A4C00636331 /* Singlish ProUITests */,
+			);
+			name = "Singlish ProUITests";
+			packageProductDependencies = (
+			);
+			productName = "Singlish ProUITests";
+			productReference = 3D770BE72F9A0A4C00636331 /* Singlish ProUITests.xctest */;
+			productType = "com.apple.product-type.bundle.ui-testing";
+		};
+		3D770C472F9A1E2900636331 /* SinglishKeyboard */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = 3D770C542F9A1E2900636331 /* Build configuration list for PBXNativeTarget "SinglishKeyboard" */;
+			buildPhases = (
+				3D770C442F9A1E2900636331 /* Sources */,
+				3D770C452F9A1E2900636331 /* Frameworks */,
+				3D770C462F9A1E2900636331 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			fileSystemSynchronizedGroups = (
+				3D770C552F9A1E2900636340 /* Shared */,
+				3D770C492F9A1E2900636331 /* SinglishKeyboard */,
+			);
+			name = SinglishKeyboard;
+			packageProductDependencies = (
+			);
+			productName = SinglishKeyboard;
+			productReference = 3D770C482F9A1E2900636331 /* SinglishKeyboard.appex */;
+			productType = "com.apple.product-type.app-extension";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		3D770BC62F9A0A4B00636331 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = 1;
+				LastSwiftUpdateCheck = 1640;
+				LastUpgradeCheck = 1640;
+				TargetAttributes = {
+					3D770BCD2F9A0A4B00636331 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+					3D770BDC2F9A0A4C00636331 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 3D770BCD2F9A0A4B00636331;
+					};
+					3D770BE62F9A0A4C00636331 = {
+						CreatedOnToolsVersion = 16.4;
+						TestTargetID = 3D770BCD2F9A0A4B00636331;
+					};
+					3D770C472F9A1E2900636331 = {
+						CreatedOnToolsVersion = 16.4;
+					};
+				};
+			};
+			buildConfigurationList = 3D770BC92F9A0A4B00636331 /* Build configuration list for PBXProject "Singlish Pro" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				en,
+				Base,
+			);
+			mainGroup = 3D770BC52F9A0A4B00636331;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 3D770BCF2F9A0A4B00636331 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				3D770BCD2F9A0A4B00636331 /* Singlish Pro */,
+				3D770BDC2F9A0A4C00636331 /* Singlish ProTests */,
+				3D770BE62F9A0A4C00636331 /* Singlish ProUITests */,
+				3D770C472F9A1E2900636331 /* SinglishKeyboard */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		3D770BCC2F9A0A4B00636331 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3D770BDB2F9A0A4C00636331 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3D770BE52F9A0A4C00636331 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3D770C462F9A1E2900636331 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		3D770BCA2F9A0A4B00636331 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3D770BD92F9A0A4C00636331 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3D770BE32F9A0A4C00636331 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		3D770C442F9A1E2900636331 /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		3D770BDF2F9A0A4C00636331 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3D770BCD2F9A0A4B00636331 /* Singlish Pro */;
+			targetProxy = 3D770BDE2F9A0A4C00636331 /* PBXContainerItemProxy */;
+		};
+		3D770BE92F9A0A4C00636331 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3D770BCD2F9A0A4B00636331 /* Singlish Pro */;
+			targetProxy = 3D770BE82F9A0A4C00636331 /* PBXContainerItemProxy */;
+		};
+		3D770C4E2F9A1E2900636331 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = 3D770C472F9A1E2900636331 /* SinglishKeyboard */;
+			targetProxy = 3D770C4D2F9A1E2900636331 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		3D770BEF2F9A0A4C00636331 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"DEBUG=1",
+					"$(inherited)",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "DEBUG $(inherited)";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+			};
+			name = Debug;
+		};
+		3D770BF02F9A0A4C00636331 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ASSETCATALOG_COMPILER_GENERATE_SWIFT_ASSET_SYMBOL_EXTENSIONS = YES;
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++20";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu17;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				LOCALIZATION_PREFERS_STRING_CATALOGS = YES;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				SDKROOT = iphoneos;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				VALIDATE_PRODUCT = YES;
+			};
+			name = Release;
+		};
+		3D770BF22F9A0A4C00636331 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Singlish Pro.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+					DEVELOPMENT_TEAM = XD2W6255MB;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = "Singlish LK";
+				INFOPLIST_KEY_NSPrivacyTracking = NO;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "KDJ.Singlish-Pro";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3D770BF32F9A0A4C00636331 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = "Singlish Pro.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+					DEVELOPMENT_TEAM = XD2W6255MB;
+				CURRENT_PROJECT_VERSION = 1;
+				ENABLE_PREVIEWS = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = "";
+				INFOPLIST_KEY_CFBundleDisplayName = "Singlish LK";
+				INFOPLIST_KEY_NSPrivacyTracking = NO;
+				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
+				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
+				INFOPLIST_KEY_UILaunchScreen_Generation = YES;
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPad = "UIInterfaceOrientationPortrait UIInterfaceOrientationPortraitUpsideDown UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				INFOPLIST_KEY_UISupportedInterfaceOrientations_iPhone = "UIInterfaceOrientationPortrait UIInterfaceOrientationLandscapeLeft UIInterfaceOrientationLandscapeRight";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "KDJ.Singlish-Pro";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+		3D770BF52F9A0A4C00636331 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+					DEVELOPMENT_TEAM = XD2W6255MB;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "KDJ.Singlish-ProTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Singlish Pro.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Singlish Pro";
+			};
+			name = Debug;
+		};
+		3D770BF62F9A0A4C00636331 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				CODE_SIGN_STYLE = Automatic;
+					DEVELOPMENT_TEAM = XD2W6255MB;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "KDJ.Singlish-ProTests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/Singlish Pro.app/$(BUNDLE_EXECUTABLE_FOLDER_PATH)/Singlish Pro";
+			};
+			name = Release;
+		};
+		3D770BF82F9A0A4C00636331 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+					DEVELOPMENT_TEAM = XD2W6255MB;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "KDJ.Singlish-ProUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Singlish Pro";
+			};
+			name = Debug;
+		};
+		3D770BF92F9A0A4C00636331 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_STYLE = Automatic;
+					DEVELOPMENT_TEAM = XD2W6255MB;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "KDJ.Singlish-ProUITests";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_EMIT_LOC_STRINGS = NO;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+				TEST_TARGET_NAME = "Singlish Pro";
+			};
+			name = Release;
+		};
+		3D770C512F9A1E2900636331 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Singlish Pro.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+					DEVELOPMENT_TEAM = XD2W6255MB;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SinglishKeyboard/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Singlish LK";
+				INFOPLIST_KEY_NSPrivacyTracking = NO;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "KDJ.Singlish-Pro.SinglishKeyboard";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Debug;
+		};
+		3D770C522F9A1E2900636331 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = "Singlish Pro.entitlements";
+				CODE_SIGN_STYLE = Automatic;
+					DEVELOPMENT_TEAM = XD2W6255MB;
+				CURRENT_PROJECT_VERSION = 1;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_FILE = SinglishKeyboard/Info.plist;
+				INFOPLIST_KEY_CFBundleDisplayName = "Singlish LK";
+				INFOPLIST_KEY_NSPrivacyTracking = NO;
+				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/Frameworks",
+					"@executable_path/../../Frameworks",
+				);
+				MARKETING_VERSION = 1.0;
+				PRODUCT_BUNDLE_IDENTIFIER = "KDJ.Singlish-Pro.SinglishKeyboard";
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SKIP_INSTALL = YES;
+				SWIFT_EMIT_LOC_STRINGS = YES;
+				SWIFT_VERSION = 5.0;
+				TARGETED_DEVICE_FAMILY = "1,2";
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		3D770BC92F9A0A4B00636331 /* Build configuration list for PBXProject "Singlish Pro" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D770BEF2F9A0A4C00636331 /* Debug */,
+				3D770BF02F9A0A4C00636331 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3D770BF12F9A0A4C00636331 /* Build configuration list for PBXNativeTarget "Singlish Pro" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D770BF22F9A0A4C00636331 /* Debug */,
+				3D770BF32F9A0A4C00636331 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3D770BF42F9A0A4C00636331 /* Build configuration list for PBXNativeTarget "Singlish ProTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D770BF52F9A0A4C00636331 /* Debug */,
+				3D770BF62F9A0A4C00636331 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3D770BF72F9A0A4C00636331 /* Build configuration list for PBXNativeTarget "Singlish ProUITests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D770BF82F9A0A4C00636331 /* Debug */,
+				3D770BF92F9A0A4C00636331 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+		3D770C542F9A1E2900636331 /* Build configuration list for PBXNativeTarget "SinglishKeyboard" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				3D770C512F9A1E2900636331 /* Debug */,
+				3D770C522F9A1E2900636331 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = 3D770BC62F9A0A4B00636331 /* Project object */;
+}
