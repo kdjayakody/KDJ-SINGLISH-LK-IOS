@@ -23,4 +23,7 @@ enum VersionConfig {
 
     /// App group identifier for data sharing
     static let appGroupIdentifier = "group.KDJ.Singlish-Pro"
+
+    /// Minimum iOS version required
+    static let iOSVersion = "26.0"
 }
