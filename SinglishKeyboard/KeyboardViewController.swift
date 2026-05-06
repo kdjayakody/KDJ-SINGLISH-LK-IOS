@@ -3,6 +3,8 @@ import SwiftUI
 
 class KeyboardViewController: UIInputViewController {
     private var hostingController: UIHostingController<KeyboardView>?
+    private let appSettingsURL = URL(string: "singlishlk://settings")!
+    private let keyboardSettingsURL = URL(string: "prefs:root=General&path=Keyboard")!
     private let engine = SinglishEngine()
     private let settings = KeyboardSettings.shared
     private var isShifted = false
@@ -10,11 +12,20 @@ class KeyboardViewController: UIInputViewController {
     private var previousDeleteCount: Int = 0
     private var lastSpaceTime: Date = .distantPast
     private var isOpenAccessGranted = false
+    private var toastView: KeyboardToastView?
 
     override func viewDidLoad() {
         super.viewDidLoad()
         isOpenAccessGranted = self.hasFullAccess
+        settings.refreshFromSharedStore()
         setupKeyboard()
+        updateSuggestions()
+    }
+
+    override func viewWillAppear(_ animated: Bool) {
+        super.viewWillAppear(animated)
+        isOpenAccessGranted = self.hasFullAccess
+        settings.refreshFromSharedStore()
         updateSuggestions()
     }
 
@@ -26,8 +37,9 @@ class KeyboardViewController: UIInputViewController {
     private func setupKeyboard() {
         let keyboardView = makeKeyboardView()
         let host = UIHostingController(rootView: keyboardView)
+        view.backgroundColor = UIColor(red: 0.18, green: 0.22, blue: 0.25, alpha: 1)
         host.view.translatesAutoresizingMaskIntoConstraints = false
-        host.view.backgroundColor = .clear
+        host.view.backgroundColor = UIColor(red: 0.18, green: 0.22, blue: 0.25, alpha: 1)
 
         addChild(host)
         view.addSubview(host.view)
@@ -62,6 +74,12 @@ class KeyboardViewController: UIInputViewController {
             },
             switchMode: { [weak self] mode in
                 self?.switchToMode(mode)
+            },
+            openApp: { [weak self] in
+                self?.openContainerApp()
+            },
+            openSettings: { [weak self] in
+                self?.openAppSettings()
             },
             isOpenAccessGranted: isOpenAccessGranted,
             suggestions: [],
@@ -316,10 +334,120 @@ class KeyboardViewController: UIInputViewController {
             switchMode: { [weak self] mode in
                 self?.switchToMode(mode)
             },
+            openApp: { [weak self] in
+                self?.openContainerApp()
+            },
+            openSettings: { [weak self] in
+                self?.openAppSettings()
+            },
             isOpenAccessGranted: isOpenAccessGranted,
             suggestions: suggestedWords,
             isShifted: currentIsShifted,
             mode: currentModeSnapshot
         )
+    }
+
+    private func openAppSettings() {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
+
+        extensionContext?.open(keyboardSettingsURL) { [weak self] success in
+            guard success else {
+                DispatchQueue.main.async {
+                    self?.showToast(message: "Open Settings → General → Keyboard")
+                }
+                return
+            }
+        }
+    }
+
+    private func openContainerApp() {
+        let generator = UIImpactFeedbackGenerator(style: .medium)
+        generator.impactOccurred()
+
+        extensionContext?.open(appSettingsURL) { [weak self] success in
+            guard let self else { return }
+            if success {
+                return
+            }
+
+            self.extensionContext?.open(self.keyboardSettingsURL) { settingsSuccess in
+                guard !settingsSuccess else { return }
+                DispatchQueue.main.async {
+                    self.showToast(message: "Open Singlish LK app from Home Screen")
+                }
+            }
+        }
+    }
+    
+    private func showToast(message: String) {
+        toastView?.removeFromSuperview()
+        
+        let toast = KeyboardToastView(message: message)
+        toast.translatesAutoresizingMaskIntoConstraints = false
+        view.addSubview(toast)
+        
+        NSLayoutConstraint.activate([
+            toast.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            toast.bottomAnchor.constraint(equalTo: view.topAnchor, constant: -10)
+        ])
+        
+        toastView = toast
+        toast.alpha = 0
+        toast.transform = CGAffineTransform(translationX: 0, y: 20)
+        
+        UIView.animate(withDuration: 0.3) {
+            toast.alpha = 1
+            toast.transform = .identity
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 2.5) {
+            UIView.animate(withDuration: 0.3, animations: {
+                toast.alpha = 0
+                toast.transform = CGAffineTransform(translationX: 0, y: 20)
+            }) { _ in
+                toast.removeFromSuperview()
+                if self.toastView === toast {
+                    self.toastView = nil
+                }
+            }
+        }
+    }
+}
+
+// MARK: - Toast View for Keyboard Extension
+class KeyboardToastView: UIView {
+    private let messageLabel = UILabel()
+    
+    init(message: String) {
+        super.init(frame: .zero)
+        setup(message: message)
+    }
+    
+    required init?(coder: NSCoder) {
+        super.init(coder: coder)
+    }
+    
+    private func setup(message: String) {
+        backgroundColor = UIColor(white: 0.1, alpha: 0.95)
+        layer.cornerRadius = 10
+        layer.shadowColor = UIColor.black.cgColor
+        layer.shadowOpacity = 0.3
+        layer.shadowOffset = CGSize(width: 0, height: 2)
+        layer.shadowRadius = 5
+        
+        messageLabel.text = message
+        messageLabel.textColor = .white
+        messageLabel.font = .systemFont(ofSize: 13, weight: .medium)
+        messageLabel.textAlignment = .center
+        addSubview(messageLabel)
+        
+        messageLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            messageLabel.topAnchor.constraint(equalTo: topAnchor, constant: 10),
+            messageLabel.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
+            messageLabel.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 16),
+            messageLabel.trailingAnchor.constraint(equalTo: trailingAnchor, constant: -16)
+        ])
     }
 }

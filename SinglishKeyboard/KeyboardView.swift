@@ -3,6 +3,7 @@ import SwiftUI
 enum KeyboardMode {
     case english
     case sinhala
+    case emoji
 }
 
 let sinhalaKeyMap: [String: String] = [
@@ -36,6 +37,16 @@ let longPressMap: [String: [String]] = [
     "v": ["ව", "v"]
 ]
 
+// Emoji keyboard data
+let emojiCategories: [(icon: String, emoji: [String])] = [
+    ("😀", ["😀","😃","😄","😁","😆","😅","🤣","😂","🙂","🙃","😉","😊","😇","🥰","😍","🤩","😘","😗","😚","😙","🥲","😋","😛","😜","🤪","😝","🤑","🤗","🤭","🤫","🤔","🤐","🤨","😐","😑","😶","😏","😒","🙄","😬","🤥"]),
+    ("👋", ["👋","🤚","🖐️","✋","🖖","🫱","🫲","🤝","🙏","✌️","🤞","🤟","🤘","🤙","👈","👉","👆","🖕","👇","☝️","👍","👎","✊","👊","🤛","🤜","👏","🙌","👐","🤲","🙏"]),
+    ("❤️", ["❤️","🧡","💛","💚","💙","💜","🖤","🤍","🤎","💔","❣️","💕","💞","💓","💗","💖","💘","💝","💟","♥️"]),
+    ("🎉", ["🎉","🎊","🎈","🎁","🎀","🏆","🥇","🥈","🥉","🏅","🎖️","🎗️","🎫","🎟️","🧧","✉️","📩","📨","📧","💌","📥","📤","📦","🏷️","📪","📫","📬","📭","📮"]),
+    ("😂", ["😂","😭","😢","🥲","😤","😠","😡","🤬","😤","😈","👿","💀","☠️","💩","🤡","👹","👺","👻","👽","👾","🤖"]),
+    ("🌏", ["🇱🇰","🇺🇸","🇬🇧","🇮🇳","🇯🇵","🇨🇳","🇰🇷","🇦🇪","🇸🇦","🇫🇷","🇩🇪","🇮🇹","🇪🇸","🇵🇹","🇷🇺","🇧🇷","🇮🇩","🇹🇭","🇲🇾","🇸🇬"]),
+]
+
 struct KeyboardView: View {
     var insertText: (String) -> Void
     var deleteBackward: () -> Void
@@ -43,6 +54,8 @@ struct KeyboardView: View {
     var toggleShift: () -> Void
     var advanceToNextInputMode: () -> Void
     var switchMode: (KeyboardMode) -> Void
+    var openApp: () -> Void
+    var openSettings: () -> Void
     var isOpenAccessGranted: Bool
     var suggestions: [String]
     var isShifted: Bool
@@ -59,225 +72,209 @@ struct KeyboardView: View {
 
     @State private var pressedKey: String? = nil
     @State private var keyTouchStart: Date? = nil
+    @State private var selectedEmojiCategory: Int = 0
 
     var accentColor: Color {
         settings.accentColor.swiftUIColor
     }
 
+    private let keyboardBackground = Color(red: 0.18, green: 0.22, blue: 0.25)
+    private let barBackground = Color(red: 0.14, green: 0.17, blue: 0.20)
+    private let barSegment = Color(red: 0.19, green: 0.23, blue: 0.27)
+    private let keyColor = Color(red: 0.34, green: 0.37, blue: 0.41)
+    private let utilityKeyColor = Color(red: 0.23, green: 0.27, blue: 0.31)
+    private let primaryLabel = Color.white.opacity(0.96)
+    private let secondaryLabel = Color.white.opacity(0.72)
+    private let tertiaryLabel = Color.white.opacity(0.56)
+
     var body: some View {
         VStack(spacing: 0) {
             topBar
 
-            Rectangle()
-                .fill(Color(UIColor.systemGray4))
-                .frame(height: 0.5)
-
-            VStack(spacing: 5) {
-                if settings.showNumberRow {
-                    HStack(spacing: 5) {
-                        ForEach(numberRow, id: \.self) { key in
-                            keyButton(key, display: key, width: 32)
-                        }
-                    }
-                }
-
-                ForEach(0..<rows.count, id: \.self) { rowIndex in
-                    HStack(spacing: 5) {
-                        if rowIndex == 2 {
-                            Button(action: {
-                                settings.performHaptic()
-                                toggleShift()
-                            }) {
-                                Image(systemName: isShifted ? "shift.fill" : "shift")
-                                    .font(.system(size: 16))
-                                    .frame(width: 44, height: 44)
-                                    .background(Color(UIColor.systemGray4))
-                                    .foregroundColor(.black)
-                                    .cornerRadius(8)
-                            }
-                        }
-
-                        ForEach(rows[rowIndex], id: \.self) { key in
-                            let characterToSend = mode == .sinhala ? key : (isShifted ? key.uppercased() : key)
-                            let sinhalaLabel = mode == .sinhala ? sinhalaKeyMap[key] : nil
-                            ZStack {
-                                keyBody(key: key, characterToSend: characterToSend, sinhalaLabel: sinhalaLabel, rowIndex: rowIndex)
-
-                                if settings.keyPreview && pressedKey == key {
-                                    keyPopup(key: key, sinhalaLabel: sinhalaLabel)
-                                }
-                            }
-                            .simultaneousGesture(
-                                DragGesture(minimumDistance: 0)
-                                    .onChanged { _ in
-                                        if pressedKey != key {
-                                            pressedKey = key
-                                            keyTouchStart = Date()
-                                        }
-                                    }
-                                    .onEnded { _ in
-                                        let duration = Date().timeIntervalSince(keyTouchStart ?? Date())
-                                        settings.performHaptic()
-
-                                        if duration >= 0.4 {
-                                            handleLongPress(key: key)
-                                        } else {
-                                            insertText(characterToSend)
-                                        }
-
-                                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
-                                            pressedKey = nil
-                                        }
-                                        keyTouchStart = nil
-                                    }
-                            )
-                        }
-
-                        if rowIndex == 2 {
-                            Button(action: {
-                                settings.performHaptic()
-                                deleteBackward()
-                            }) {
-                                Image(systemName: "delete.left")
-                                    .font(.system(size: 16))
-                                    .frame(width: 44, height: 44)
-                                    .background(Color(UIColor.systemGray4))
-                                    .foregroundColor(.black)
-                                    .cornerRadius(8)
-                            }
-                        }
-                    }
-                }
-
-                bottomRow
+            if mode == .emoji {
+                emojiKeyboard
+            } else {
+                regularKeyboard
             }
-            .padding(.horizontal, 4)
-            .padding(.top, 5)
-            .padding(.bottom, 10)
-            .background(Color(UIColor.systemGray6))
         }
+        .background(keyboardBackground)
+    }
+
+    private var regularKeyboard: some View {
+        VStack(spacing: 8) {
+            if settings.showNumberRow {
+                HStack(spacing: 6) {
+                    ForEach(numberRow, id: \.self) { key in
+                        keyButton(key, display: key, width: 34, height: 44, background: keyColor)
+                    }
+                }
+            }
+
+            ForEach(0..<rows.count, id: \.self) { rowIndex in
+                HStack(spacing: 6) {
+                    if rowIndex == 2 {
+                        Button(action: {
+                            settings.performHaptic()
+                            toggleShift()
+                        }) {
+                            Image(systemName: isShifted ? "shift.fill" : "shift")
+                                .font(.system(size: 22, weight: .semibold))
+                                .frame(width: 47, height: 46)
+                                .keyboardKeyStyle(background: utilityKeyColor, foreground: primaryLabel)
+                        }
+                    }
+
+                    ForEach(rows[rowIndex], id: \.self) { key in
+                        let characterToSend = mode == .sinhala ? key : (isShifted ? key.uppercased() : key)
+                        let sinhalaLabel = mode == .sinhala ? sinhalaKeyMap[key] : nil
+                        ZStack {
+                            keyBody(key: key, characterToSend: characterToSend, sinhalaLabel: sinhalaLabel, rowIndex: rowIndex)
+
+                            if settings.keyPreview && pressedKey == key {
+                                keyPopup(key: key, sinhalaLabel: sinhalaLabel)
+                            }
+                        }
+                        .simultaneousGesture(
+                            DragGesture(minimumDistance: 0)
+                                .onChanged { _ in
+                                    if pressedKey != key {
+                                        pressedKey = key
+                                        keyTouchStart = Date()
+                                    }
+                                }
+                                .onEnded { _ in
+                                    let duration = Date().timeIntervalSince(keyTouchStart ?? Date())
+                                    settings.performHaptic()
+
+                                    if duration >= 0.4 {
+                                        handleLongPress(key: key)
+                                    } else {
+                                        insertText(characterToSend)
+                                    }
+
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 0.05) {
+                                        pressedKey = nil
+                                    }
+                                    keyTouchStart = nil
+                                }
+                        )
+                    }
+
+                    if rowIndex == 2 {
+                        Button(action: {
+                            settings.performHaptic()
+                            deleteBackward()
+                        }) {
+                            Image(systemName: "delete.left")
+                                .font(.system(size: 20, weight: .semibold))
+                                .frame(width: 47, height: 46)
+                                .keyboardKeyStyle(background: utilityKeyColor, foreground: primaryLabel)
+                        }
+                    }
+                }
+                .padding(.leading, rowIndex == 1 ? 19 : 0)
+            }
+
+            bottomRow
+        }
+        .padding(.horizontal, 6)
+        .padding(.top, 7)
+        .padding(.bottom, 9)
+        .background(keyboardBackground)
     }
 
     private var topBar: some View {
-        HStack(spacing: 6) {
-            Image("KeyboardLogo")
-                .resizable()
-                .aspectRatio(contentMode: .fit)
-                .frame(width: 22, height: 22)
-                .clipShape(RoundedRectangle(cornerRadius: 4))
-
-            HStack(spacing: 0) {
-                Button(action: { switchMode(.english) }) {
-                    Text("En")
-                        .font(.system(size: 12, weight: mode == .english ? .bold : .medium))
-                        .foregroundColor(mode == .english ? .white : .black)
-                        .frame(width: 32, height: 24)
-                        .background(mode == .english ? accentColor : Color(UIColor.systemGray5))
-                        .cornerRadius(5)
-                }
-
-                Button(action: { switchMode(.sinhala) }) {
-                    Text("සිං")
-                        .font(.system(size: 12, weight: mode == .sinhala ? .bold : .medium))
-                        .foregroundColor(mode == .sinhala ? .white : .black)
-                        .frame(width: 32, height: 24)
-                        .background(mode == .sinhala ? accentColor : Color(UIColor.systemGray5))
-                        .cornerRadius(5)
+        HStack(spacing: 0) {
+            topBarSegment(width: 48) {
+                Button(action: openApp) {
+                    Image("KeyboardLogo")
+                        .resizable()
+                        .aspectRatio(contentMode: .fit)
+                        .frame(width: 26, height: 26)
                 }
             }
 
-            Spacer()
+            topBarModeButton(title: "En", isActive: mode == .english) {
+                switchMode(.english)
+            }
+
+            topBarModeButton(title: "සිං", isActive: mode == .sinhala) {
+                switchMode(.sinhala)
+            }
+
+            topBarIconButton(icon: "😀", isActive: mode == .emoji) {
+                switchMode(.emoji)
+            }
+
+            Spacer(minLength: 0)
 
             if settings.showClipboardPaste && isOpenAccessGranted {
-                Button(action: {
+                topBarIconButton(systemName: "doc.on.clipboard") {
                     if let clipboard = UIPasteboard.general.string, !clipboard.isEmpty {
                         insertText(clipboard)
                     }
-                }) {
-                    Image(systemName: "doc.on.clipboard")
-                        .font(.system(size: 14))
-                        .foregroundColor(.black)
-                        .frame(width: 28, height: 24)
-                        .background(Color(UIColor.systemGray5))
-                        .cornerRadius(5)
                 }
             }
 
-            if !suggestions.isEmpty {
-                ScrollView(.horizontal, showsIndicators: false) {
-                    HStack(spacing: 6) {
-                        ForEach(Array(suggestions.enumerated()), id: \.offset) { _, suggestion in
-                            Button(action: {
-                                insertSuggestion(suggestion)
-                            }) {
-                                Text(suggestion)
-                                    .font(.system(size: 13, weight: .medium))
-                                    .foregroundColor(.black)
-                                    .padding(.horizontal, 10)
-                                    .padding(.vertical, 4)
-                                    .background(Color(UIColor.systemGray5))
-                                    .cornerRadius(12)
-                            }
-                        }
-                    }
-                }
-            }
+            topBarIconButton(systemName: "gearshape.fill", action: openSettings)
         }
-        .padding(.horizontal, 8)
-        .padding(.vertical, 4)
-        .background(Color.white)
+        .padding(.horizontal, 0)
+        .frame(height: 58)
+        .background(barBackground)
     }
 
-    private func keyButton(_ key: String, display: String, width: CGFloat) -> some View {
+    private func keyButton(_ key: String, display: String, width: CGFloat, height: CGFloat, background: Color) -> some View {
         Button(action: {
             settings.performHaptic()
             insertText(display)
         }) {
             Text(display)
-                .font(.system(size: 20, weight: .regular, design: .rounded))
-                .frame(width: width, height: 36)
-                .background(Color.white)
-                .foregroundColor(.black)
-                .cornerRadius(8)
-                .shadow(color: .black.opacity(0.08), radius: 1, x: 0, y: 1)
+                .font(.system(size: 17, weight: .regular))
+                .frame(width: width, height: height)
+                .keyboardKeyStyle(background: background, foreground: primaryLabel)
         }
     }
 
     private func keyBody(key: String, characterToSend: String, sinhalaLabel: String?, rowIndex: Int) -> some View {
-        VStack(spacing: 1) {
+        ZStack {
             if let label = sinhalaLabel, !label.isEmpty, mode == .sinhala {
                 Text(label)
-                    .font(.system(size: 9))
-                    .foregroundColor(.gray)
-            } else {
-                Text("")
-                    .font(.system(size: 9))
+                    .font(.system(size: 8, weight: .medium))
+                    .foregroundColor(tertiaryLabel)
+                    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topTrailing)
+                    .padding(.top, 5)
+                    .padding(.trailing, 6)
             }
+
             Text(isShifted && mode != .sinhala ? key.uppercased() : key)
-                .font(.system(size: 20, weight: .regular, design: .rounded))
+                .font(.system(size: 21, weight: .regular))
+                .foregroundColor(primaryLabel)
+                .offset(y: 3)
         }
-        .frame(width: rowIndex == 1 ? 34 : 32, height: 44)
-        .background(Color.white)
-        .foregroundColor(.black)
-        .cornerRadius(8)
-        .shadow(color: .black.opacity(0.08), radius: 1, x: 0, y: 1)
+        .frame(width: rowIndex == 1 ? 38 : 35, height: 46)
+        .keyboardKeyStyle(background: keyColor, foreground: primaryLabel)
     }
 
     private func keyPopup(key: String, sinhalaLabel: String?) -> some View {
         VStack(spacing: 1) {
             if let label = sinhalaLabel, !label.isEmpty, mode == .sinhala {
                 Text(label)
-                    .font(.system(size: 13))
-                    .foregroundColor(.black)
+                    .font(.system(size: 12))
+                    .foregroundColor(secondaryLabel)
             }
             Text(isShifted && mode != .sinhala ? key.uppercased() : key)
-                .font(.system(size: 28, weight: .semibold))
+                .font(.system(size: 26, weight: .semibold))
+                .foregroundColor(primaryLabel)
         }
-        .frame(width: 48, height: 64)
-        .background(Color.white)
+        .frame(width: 46, height: 60)
+        .background(keyColor)
         .cornerRadius(10)
-        .shadow(color: .black.opacity(0.3), radius: 4, x: 0, y: 2)
-        .offset(y: -48)
+        .overlay(
+            RoundedRectangle(cornerRadius: 10)
+                .strokeBorder(Color.white.opacity(0.05), lineWidth: 0.5)
+        )
+        .shadow(color: .black.opacity(0.35), radius: 6, x: 0, y: 3)
+        .offset(y: -44)
         .zIndex(10)
     }
 
@@ -293,29 +290,34 @@ struct KeyboardView: View {
     }
 
     private var bottomRow: some View {
-        HStack(spacing: 5) {
+        HStack(spacing: 6) {
+            Button(action: {
+                settings.performHaptic()
+            }) {
+                Text("123")
+                    .font(.system(size: 17, weight: .medium))
+                    .frame(width: 52, height: 46)
+                    .keyboardKeyStyle(background: utilityKeyColor, foreground: primaryLabel)
+            }
+
             Button(action: {
                 settings.performHaptic()
                 advanceToNextInputMode()
             }) {
                 Image(systemName: "globe")
-                    .font(.system(size: 16))
-                    .frame(width: 44, height: 44)
-                    .background(Color(UIColor.systemGray4))
-                    .foregroundColor(.black)
-                    .cornerRadius(8)
+                    .font(.system(size: 22, weight: .regular))
+                    .frame(width: 52, height: 46)
+                    .keyboardKeyStyle(background: utilityKeyColor, foreground: primaryLabel)
             }
 
             Button(action: {
                 settings.performHaptic()
-                insertText(",")
+                insertText(".")
             }) {
-                Text(",")
-                    .font(.system(size: 22, design: .rounded))
-                    .frame(width: 44, height: 44)
-                    .background(Color(UIColor.systemGray4))
-                    .foregroundColor(.black)
-                    .cornerRadius(8)
+                Text(".")
+                    .font(.system(size: 22, weight: .medium))
+                    .frame(width: 47, height: 46)
+                    .keyboardKeyStyle(background: keyColor, foreground: primaryLabel)
             }
 
             SpaceBarView(mode: mode, onSwipe: {
@@ -325,29 +327,157 @@ struct KeyboardView: View {
 
             Button(action: {
                 settings.performHaptic()
-                insertText(".")
-            }) {
-                Text(".")
-                    .font(.system(size: 22, design: .rounded))
-                    .frame(width: 44, height: 44)
-                    .background(Color(UIColor.systemGray4))
-                    .foregroundColor(.black)
-                    .cornerRadius(8)
-            }
-
-            Button(action: {
-                settings.performHaptic()
                 insertText("\n")
             }) {
                 Text("return")
-                    .font(.system(size: 15, weight: .medium, design: .rounded))
-                    .frame(width: 74, height: 44)
-                    .background(accentColor)
-                    .foregroundColor(.white)
-                    .cornerRadius(8)
+                    .font(.system(size: 16, weight: .medium))
+                    .frame(width: 108, height: 46)
+                    .keyboardKeyStyle(background: accentColor, foreground: primaryLabel)
             }
         }
-        .padding(.horizontal, 4)
+    }
+
+    private func topBarSegment<Content: View>(width: CGFloat, @ViewBuilder content: () -> Content) -> some View {
+        ZStack {
+            content()
+        }
+        .frame(width: width, height: 58)
+        .background(barSegment)
+        .overlay(alignment: .trailing) {
+            Rectangle()
+                .fill(Color.white.opacity(0.035))
+                .frame(width: 1)
+        }
+    }
+
+    private func topBarModeButton(title: String, isActive: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(title)
+                .font(.system(size: 15, weight: isActive ? .semibold : .medium))
+                .foregroundColor(primaryLabel)
+                .frame(width: 52, height: 58)
+                .background(isActive ? accentColor : barBackground)
+        }
+        .overlay(alignment: .trailing) {
+            Rectangle()
+                .fill(Color.white.opacity(0.035))
+                .frame(width: 1)
+        }
+    }
+
+    private func topBarIconButton(systemName: String, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Image(systemName: systemName)
+                .font(.system(size: 18, weight: .regular))
+                .foregroundColor(secondaryLabel)
+                .frame(width: 44, height: 58)
+        }
+    }
+
+    private func topBarIconButton(icon: String, isActive: Bool, action: @escaping () -> Void) -> some View {
+        Button(action: action) {
+            Text(icon)
+                .font(.system(size: 22))
+                .frame(width: 44, height: 58)
+                .background(isActive ? accentColor : barBackground)
+        }
+        .overlay(alignment: .trailing) {
+            Rectangle()
+                .fill(Color.white.opacity(0.035))
+                .frame(width: 1)
+        }
+    }
+
+    private var emojiKeyboard: some View {
+        VStack(spacing: 8) {
+            // Category tabs
+            ScrollView(.horizontal, showsIndicators: false) {
+                HStack(spacing: 4) {
+                    ForEach(0..<emojiCategories.count, id: \.self) { index in
+                        Button(action: {
+                            settings.performHaptic()
+                            selectedEmojiCategory = index
+                        }) {
+                            Text(emojiCategories[index].icon)
+                                .font(.system(size: 22))
+                                .frame(width: 44, height: 38)
+                                .background(selectedEmojiCategory == index ? barSegment : Color.clear)
+                                .cornerRadius(8)
+                        }
+                    }
+                }
+                .padding(.horizontal, 8)
+            }
+            .frame(height: 44)
+
+            // Emoji grid
+            ScrollView {
+                LazyVGrid(columns: Array(repeating: GridItem(.flexible(), spacing: 8), count: 8), spacing: 8) {
+                    ForEach(emojiCategories[selectedEmojiCategory].emoji, id: \.self) { emoji in
+                        Button(action: {
+                            settings.performHaptic()
+                            insertText(emoji)
+                        }) {
+                            Text(emoji)
+                                .font(.system(size: 28))
+                                .frame(width: 40, height: 40)
+                        }
+                    }
+                }
+                .padding(.horizontal, 8)
+            }
+
+            // Bottom bar
+            HStack(spacing: 6) {
+                Button(action: {
+                    settings.performHaptic()
+                    advanceToNextInputMode()
+                }) {
+                    Image(systemName: "globe")
+                        .font(.system(size: 22, weight: .regular))
+                        .frame(width: 52, height: 46)
+                        .keyboardKeyStyle(background: utilityKeyColor, foreground: primaryLabel)
+                }
+
+                Button(action: {
+                    settings.performHaptic()
+                    switchMode(.sinhala)
+                }) {
+                    Text("abc")
+                        .font(.system(size: 17, weight: .medium))
+                        .frame(width: 80, height: 46)
+                        .keyboardKeyStyle(background: utilityKeyColor, foreground: primaryLabel)
+                }
+
+                Spacer()
+
+                Button(action: {
+                    settings.performHaptic()
+                    deleteBackward()
+                }) {
+                    Image(systemName: "delete.left")
+                        .font(.system(size: 20, weight: .semibold))
+                        .frame(width: 52, height: 46)
+                        .keyboardKeyStyle(background: utilityKeyColor, foreground: primaryLabel)
+                }
+            }
+            .padding(.horizontal, 6)
+        }
+        .padding(.top, 7)
+        .padding(.bottom, 9)
+    }
+}
+
+private extension View {
+    func keyboardKeyStyle(background: Color, foreground: Color) -> some View {
+        self
+            .background(background)
+            .foregroundColor(foreground)
+            .cornerRadius(8)
+            .overlay(
+                RoundedRectangle(cornerRadius: 8)
+                    .strokeBorder(Color.white.opacity(0.05), lineWidth: 0.5)
+            )
     }
 }
 
@@ -395,23 +525,21 @@ class SpaceBarUIView: UIView {
     }
 
     private func setup() {
-        backgroundColor = .white
+        backgroundColor = UIColor(red: 0.34, green: 0.37, blue: 0.41, alpha: 1)
         layer.cornerRadius = 8
-        layer.shadowColor = UIColor.black.withAlphaComponent(0.08).cgColor
-        layer.shadowOffset = CGSize(width: 0, height: 1)
-        layer.shadowRadius = 1
-        layer.shadowOpacity = 1
+        layer.borderWidth = 0.5
+        layer.borderColor = UIColor.white.withAlphaComponent(0.05).cgColor
 
         label.textAlignment = .center
-        label.font = UIFont.systemFont(ofSize: 15, weight: .regular)
-        label.textColor = .black
+        label.font = UIFont.systemFont(ofSize: 16, weight: .regular)
+        label.textColor = UIColor.white.withAlphaComponent(0.96)
         updateLabel()
         addSubview(label)
 
         indicatorLabel.textAlignment = .center
         indicatorLabel.font = .systemFont(ofSize: 22, weight: .bold)
         indicatorLabel.textColor = .white
-        indicatorLabel.backgroundColor = .black
+        indicatorLabel.backgroundColor = UIColor(red: 0.20, green: 0.24, blue: 0.28, alpha: 1)
         indicatorLabel.layer.cornerRadius = 10
         indicatorLabel.clipsToBounds = true
         indicatorLabel.alpha = 0

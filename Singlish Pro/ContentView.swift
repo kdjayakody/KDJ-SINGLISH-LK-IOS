@@ -123,6 +123,13 @@ struct ContentView: View {
 
     private let engine = SinglishEngine()
 
+    private var screenshotMode: String? {
+        let args = ProcessInfo.processInfo.arguments
+        guard let index = args.firstIndex(of: "-screenshotMode"),
+              args.indices.contains(index + 1) else { return nil }
+        return args[index + 1]
+    }
+
     var sinhalaOutput: String {
         engine.convertToSinhala(inputText)
     }
@@ -164,8 +171,10 @@ struct ContentView: View {
             }
         }
         .onAppear {
+            applyScreenshotModeIfNeeded()
+
             let hasSeenOnboarding = (UserDefaults(suiteName: "group.KDJ.Singlish-Pro") ?? .standard).bool(forKey: "hasSeenOnboarding")
-            if !hasSeenOnboarding {
+            if !hasSeenOnboarding && screenshotMode != "onboarding" {
                 showOnboarding = true
             }
         }
@@ -189,8 +198,10 @@ struct ContentView: View {
                 .font(.system(size: 26, weight: .heavy, design: .rounded))
                 .foregroundColor(.white)
         }
-        .padding(.top, 60)
+        .padding(.top, 8)
         .padding(.bottom, 20)
+        .padding(.horizontal, 20)
+        .frame(maxWidth: .infinity)
     }
 
     private var converterCard: some View {
@@ -624,6 +635,30 @@ struct ContentView: View {
               let window = windowScene.windows.first else { return }
         let activityVC = UIActivityViewController(activityItems: [sinhalaOutput], applicationActivities: nil)
         window.rootViewController?.present(activityVC, animated: true)
+    }
+
+    private func applyScreenshotModeIfNeeded() {
+        guard let screenshotMode else { return }
+
+        switch screenshotMode {
+        case "onboarding":
+            showOnboarding = true
+            showSetup = false
+            showRatePrompt = false
+            inputText = ""
+        case "converter":
+            showOnboarding = false
+            showSetup = false
+            showRatePrompt = false
+            inputText = "mama kawda"
+        case "setup":
+            showOnboarding = false
+            showSetup = true
+            showRatePrompt = false
+            inputText = "oya kohomada"
+        default:
+            break
+        }
     }
 }
 

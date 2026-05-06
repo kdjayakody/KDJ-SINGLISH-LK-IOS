@@ -53,7 +53,6 @@
 		3D770BDD2F9A0A4C00636331 /* Singlish ProTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Singlish ProTests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D770BE72F9A0A4C00636331 /* Singlish ProUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = "Singlish ProUITests.xctest"; sourceTree = BUILT_PRODUCTS_DIR; };
 		3D770C482F9A1E2900636331 /* SinglishKeyboard.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = SinglishKeyboard.appex; sourceTree = BUILT_PRODUCTS_DIR; };
-		3D770D012F9B000100636331 /* Singlish Pro.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = "Singlish Pro.entitlements"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedBuildFileExceptionSet section */
@@ -67,11 +66,6 @@
 /* End PBXFileSystemSynchronizedBuildFileExceptionSet section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		3D770C552F9A1E2900636340 /* Shared */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = Shared;
-			sourceTree = "<group>";
-		};
 		3D770BD02F9A0A4B00636331 /* Singlish Pro */ = {
 			isa = PBXFileSystemSynchronizedRootGroup;
 			path = "Singlish Pro";
@@ -93,6 +87,11 @@
 				3D770C532F9A1E2900636331 /* Exceptions for "SinglishKeyboard" folder in "SinglishKeyboard" target */,
 			);
 			path = SinglishKeyboard;
+			sourceTree = "<group>";
+		};
+		3D770C552F9A1E2900636340 /* Shared */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Shared;
 			sourceTree = "<group>";
 		};
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -170,8 +169,8 @@
 				3D770C4E2F9A1E2900636331 /* PBXTargetDependency */,
 			);
 			fileSystemSynchronizedGroups = (
-				3D770C552F9A1E2900636340 /* Shared */,
 				3D770BD02F9A0A4B00636331 /* Singlish Pro */,
+				3D770C552F9A1E2900636340 /* Shared */,
 			);
 			name = "Singlish Pro";
 			packageProductDependencies = (
@@ -239,8 +238,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				3D770C552F9A1E2900636340 /* Shared */,
 				3D770C492F9A1E2900636331 /* SinglishKeyboard */,
+				3D770C552F9A1E2900636340 /* Shared */,
 			);
 			name = SinglishKeyboard;
 			packageProductDependencies = (
@@ -504,11 +503,12 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Singlish Pro.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-					DEVELOPMENT_TEAM = XD2W6255MB;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XD2W6255MB;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = "Singlish LK";
+				INFOPLIST_KEY_CFBundleURLTypes = "({CFBundleURLName=KDJ.Singlish-Pro;CFBundleURLSchemes=(singlishlk);})";
 				INFOPLIST_KEY_NSPrivacyTracking = NO;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -535,12 +535,13 @@
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
 				CODE_SIGN_ENTITLEMENTS = "Singlish Pro.entitlements";
 				CODE_SIGN_STYLE = Automatic;
-					DEVELOPMENT_TEAM = XD2W6255MB;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XD2W6255MB;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "";
 				INFOPLIST_KEY_CFBundleDisplayName = "Singlish LK";
+				INFOPLIST_KEY_CFBundleURLTypes = "({CFBundleURLName=KDJ.Singlish-Pro;CFBundleURLSchemes=(singlishlk);})";
 				INFOPLIST_KEY_NSPrivacyTracking = NO;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -565,8 +566,8 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-					DEVELOPMENT_TEAM = XD2W6255MB;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XD2W6255MB;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				MARKETING_VERSION = 1.0;
@@ -584,8 +585,8 @@
 			buildSettings = {
 				BUNDLE_LOADER = "$(TEST_HOST)";
 				CODE_SIGN_STYLE = Automatic;
-					DEVELOPMENT_TEAM = XD2W6255MB;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XD2W6255MB;
 				GENERATE_INFOPLIST_FILE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 18.5;
 				MARKETING_VERSION = 1.0;
@@ -602,8 +603,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-					DEVELOPMENT_TEAM = XD2W6255MB;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XD2W6255MB;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "KDJ.Singlish-ProUITests";
@@ -619,8 +620,8 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				CODE_SIGN_STYLE = Automatic;
-					DEVELOPMENT_TEAM = XD2W6255MB;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XD2W6255MB;
 				GENERATE_INFOPLIST_FILE = YES;
 				MARKETING_VERSION = 1.0;
 				PRODUCT_BUNDLE_IDENTIFIER = "KDJ.Singlish-ProUITests";
@@ -635,14 +636,15 @@
 		3D770C512F9A1E2900636331 /* Debug */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SinglishKeyboard/SinglishKeyboard.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-					DEVELOPMENT_TEAM = XD2W6255MB;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XD2W6255MB;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SinglishKeyboard/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Singlish LK";
-				INFOPLIST_KEY_NSPrivacyTracking = NO;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrivacyTracking = NO;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",
@@ -661,14 +663,15 @@
 		3D770C522F9A1E2900636331 /* Release */ = {
 			isa = XCBuildConfiguration;
 			buildSettings = {
+				CODE_SIGN_ENTITLEMENTS = SinglishKeyboard/SinglishKeyboard.entitlements;
 				CODE_SIGN_STYLE = Automatic;
-					DEVELOPMENT_TEAM = XD2W6255MB;
 				CURRENT_PROJECT_VERSION = 1;
+				DEVELOPMENT_TEAM = XD2W6255MB;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = SinglishKeyboard/Info.plist;
 				INFOPLIST_KEY_CFBundleDisplayName = "Singlish LK";
-				INFOPLIST_KEY_NSPrivacyTracking = NO;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
+				INFOPLIST_KEY_NSPrivacyTracking = NO;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/Frameworks",

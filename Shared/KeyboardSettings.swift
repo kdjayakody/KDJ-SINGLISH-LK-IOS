@@ -39,8 +39,17 @@ enum KeyboardAccent: String, CaseIterable {
 
 final class KeyboardSettings: ObservableObject {
     static let shared = KeyboardSettings()
+    private static let appGroupIdentifier = "group.KDJ.Singlish-Pro"
+    private static let settingsFileName = "KeyboardSettings.plist"
+
     private let suite: UserDefaults
+    private let settingsFileURL: URL?
+    private let canWriteSettings: Bool
+    private var settingsCache: [String: Any]
     private var isReloadingFromSuite = false
+    
+    // Darwin notification for cross-process communication
+    private static let settingsChangedNotification = "com.kdj.singlish.settingsChanged" as CFString
 
     @Published var showNumberRow: Bool {
         didSet { persist(showNumberRow, forKey: "showNumberRow") }
@@ -73,45 +82,140 @@ final class KeyboardSettings: ObservableObject {
     private let hapticGenerator = UIImpactFeedbackGenerator(style: .light)
 
     private init() {
-        suite = UserDefaults(suiteName: "group.KDJ.Singlish-Pro") ?? .standard
-        showNumberRow = suite.object(forKey: "showNumberRow") as? Bool ?? true
-        autoSpaceAfterPunctuation = suite.object(forKey: "autoSpaceAfterPunctuation") as? Bool ?? true
-        hapticFeedback = suite.object(forKey: "hapticFeedback") as? Bool ?? true
-        keyPreview = suite.object(forKey: "keyPreview") as? Bool ?? true
-        doubleSpacePeriod = suite.object(forKey: "doubleSpacePeriod") as? Bool ?? true
-        showClipboardPaste = suite.object(forKey: "showClipboardPaste") as? Bool ?? true
-        enableSuggestions = suite.object(forKey: "enableSuggestions") as? Bool ?? true
-        enableLearning = suite.object(forKey: "enableLearning") as? Bool ?? true
-        accentColor = KeyboardAccent(rawValue: suite.string(forKey: "accentColor") ?? "") ?? .black
+        suite = UserDefaults(suiteName: Self.appGroupIdentifier) ?? .standard
+        settingsFileURL = FileManager.default
+            .containerURL(forSecurityApplicationGroupIdentifier: Self.appGroupIdentifier)?
+            .appendingPathComponent(Self.settingsFileName)
+        canWriteSettings = !Self.isRunningInKeyboardExtension
+        settingsCache = Self.loadSettings(from: settingsFileURL)
+
+        showNumberRow = Self.boolValue(forKey: "showNumberRow", cache: settingsCache, suite: suite, defaultValue: true)
+        autoSpaceAfterPunctuation = Self.boolValue(forKey: "autoSpaceAfterPunctuation", cache: settingsCache, suite: suite, defaultValue: true)
+        hapticFeedback = Self.boolValue(forKey: "hapticFeedback", cache: settingsCache, suite: suite, defaultValue: true)
+        keyPreview = Self.boolValue(forKey: "keyPreview", cache: settingsCache, suite: suite, defaultValue: true)
+        doubleSpacePeriod = Self.boolValue(forKey: "doubleSpacePeriod", cache: settingsCache, suite: suite, defaultValue: true)
+        showClipboardPaste = Self.boolValue(forKey: "showClipboardPaste", cache: settingsCache, suite: suite, defaultValue: true)
+        enableSuggestions = Self.boolValue(forKey: "enableSuggestions", cache: settingsCache, suite: suite, defaultValue: true)
+        enableLearning = Self.boolValue(forKey: "enableLearning", cache: settingsCache, suite: suite, defaultValue: true)
+        accentColor = KeyboardAccent(rawValue: Self.stringValue(forKey: "accentColor", cache: settingsCache, suite: suite) ?? "") ?? .black
+
+        settingsCache = currentSettingsDictionary()
+        saveSettingsCache()
 
         hapticGenerator.prepare()
+        
+        // Listen for changes from other processes (Darwin notifications)
+        registerForCrossProcessNotifications()
+    }
+    
+    private func registerForCrossProcessNotifications() {
+        let center = CFNotificationCenterGetDarwinNotifyCenter()
+        
+        CFNotificationCenterAddObserver(
+            center,
+            Unmanaged.passUnretained(self).toOpaque(),
+            { _, observer, _, _, _ in
+                guard let observer = observer else { return }
+                let settings = Unmanaged<KeyboardSettings>.fromOpaque(observer).takeUnretainedValue()
+                DispatchQueue.main.async {
+                    settings.reloadFromSuite()
+                }
+            },
+            Self.settingsChangedNotification,
+            nil,
+            .deliverImmediately
+        )
+    }
 
-        NotificationCenter.default.addObserver(
-            forName: UserDefaults.didChangeNotification,
-            object: suite,
-            queue: .main
-        ) { [weak self] _ in
-            self?.reloadFromSuite()
+    private static func loadSettings(from url: URL?) -> [String: Any] {
+        guard let url,
+              let dictionary = NSDictionary(contentsOf: url) as? [String: Any] else {
+            return [:]
         }
+        return dictionary
+    }
+
+    private static var isRunningInKeyboardExtension: Bool {
+        Bundle.main.bundleURL.pathExtension == "appex"
+    }
+
+    private static func boolValue(forKey key: String, cache: [String: Any], suite: UserDefaults, defaultValue: Bool) -> Bool {
+        if let value = cache[key] as? Bool {
+            return value
+        }
+        return suite.object(forKey: key) as? Bool ?? defaultValue
+    }
+
+    private static func stringValue(forKey key: String, cache: [String: Any], suite: UserDefaults) -> String? {
+        if let value = cache[key] as? String {
+            return value
+        }
+        return suite.string(forKey: key)
+    }
+
+    private func currentSettingsDictionary() -> [String: Any] {
+        [
+            "showNumberRow": showNumberRow,
+            "autoSpaceAfterPunctuation": autoSpaceAfterPunctuation,
+            "hapticFeedback": hapticFeedback,
+            "keyPreview": keyPreview,
+            "doubleSpacePeriod": doubleSpacePeriod,
+            "showClipboardPaste": showClipboardPaste,
+            "accentColor": accentColor.rawValue,
+            "enableSuggestions": enableSuggestions,
+            "enableLearning": enableLearning
+        ]
+    }
+
+    private func saveSettingsCache() {
+        guard canWriteSettings, let settingsFileURL else { return }
+        try? FileManager.default.createDirectory(
+            at: settingsFileURL.deletingLastPathComponent(),
+            withIntermediateDirectories: true
+        )
+        NSDictionary(dictionary: settingsCache).write(to: settingsFileURL, atomically: true)
+    }
+    
+    private func postSettingsChangedNotification() {
+        let center = CFNotificationCenterGetDarwinNotifyCenter()
+        CFNotificationCenterPostNotification(
+            center,
+            CFNotificationName(Self.settingsChangedNotification),
+            nil,
+            nil,
+            true
+        )
     }
 
     private func persist(_ value: Any, forKey key: String) {
-        guard !isReloadingFromSuite else { return }
+        guard !isReloadingFromSuite, canWriteSettings else { return }
+        settingsCache[key] = value
+        saveSettingsCache()
         suite.set(value, forKey: key)
+        suite.synchronize()
+        // Notify other processes (keyboard extension)
+        postSettingsChangedNotification()
     }
 
     private func reloadFromSuite() {
         isReloadingFromSuite = true
-        showNumberRow = suite.object(forKey: "showNumberRow") as? Bool ?? true
-        autoSpaceAfterPunctuation = suite.object(forKey: "autoSpaceAfterPunctuation") as? Bool ?? true
-        hapticFeedback = suite.object(forKey: "hapticFeedback") as? Bool ?? true
-        keyPreview = suite.object(forKey: "keyPreview") as? Bool ?? true
-        doubleSpacePeriod = suite.object(forKey: "doubleSpacePeriod") as? Bool ?? true
-        showClipboardPaste = suite.object(forKey: "showClipboardPaste") as? Bool ?? true
-        enableSuggestions = suite.object(forKey: "enableSuggestions") as? Bool ?? true
-        enableLearning = suite.object(forKey: "enableLearning") as? Bool ?? true
-        accentColor = KeyboardAccent(rawValue: suite.string(forKey: "accentColor") ?? "") ?? .black
+        settingsCache = Self.loadSettings(from: settingsFileURL)
+        showNumberRow = Self.boolValue(forKey: "showNumberRow", cache: settingsCache, suite: suite, defaultValue: true)
+        autoSpaceAfterPunctuation = Self.boolValue(forKey: "autoSpaceAfterPunctuation", cache: settingsCache, suite: suite, defaultValue: true)
+        hapticFeedback = Self.boolValue(forKey: "hapticFeedback", cache: settingsCache, suite: suite, defaultValue: true)
+        keyPreview = Self.boolValue(forKey: "keyPreview", cache: settingsCache, suite: suite, defaultValue: true)
+        doubleSpacePeriod = Self.boolValue(forKey: "doubleSpacePeriod", cache: settingsCache, suite: suite, defaultValue: true)
+        showClipboardPaste = Self.boolValue(forKey: "showClipboardPaste", cache: settingsCache, suite: suite, defaultValue: true)
+        enableSuggestions = Self.boolValue(forKey: "enableSuggestions", cache: settingsCache, suite: suite, defaultValue: true)
+        enableLearning = Self.boolValue(forKey: "enableLearning", cache: settingsCache, suite: suite, defaultValue: true)
+        accentColor = KeyboardAccent(rawValue: Self.stringValue(forKey: "accentColor", cache: settingsCache, suite: suite) ?? "") ?? .black
+        settingsCache = currentSettingsDictionary()
+        saveSettingsCache()
         isReloadingFromSuite = false
+    }
+
+    func refreshFromSharedStore() {
+        reloadFromSuite()
     }
 
     func performHaptic() {
